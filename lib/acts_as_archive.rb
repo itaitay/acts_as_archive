@@ -100,7 +100,7 @@ class ActsAsArchive
           options[:add] = [[ options[:magic], :datetime ]]
           options[:ignore] = options[:magic]
           options[:subtract] = 'restored_at'
-          options[:database] ||= ActiveRecord::Base.connection_config
+          options[:database] ||= Rails.env.to_sym
           options[:timestamps] = false if options[:timestamps].nil?
           options[:auto_archive] = false if options[:auto_archive].nil?
           unless options[:class]
@@ -122,6 +122,7 @@ class ActsAsArchive
               end
             EVAL
             klass = eval("::#{options[:class]}")
+            klass.establish_connection(options[:database])
           end
 
           klass.record_timestamps = options[:timestamps].inspect
